@@ -66,6 +66,27 @@ const SkinToneSelector = () => {
   };
 
   const getSkinTone = (r, g, b) => {
+    // Check for non-skin tone colors
+    const isNonSkinTone = (r, g, b) => {
+      if (r < g || r < b) return true;
+
+      // Define thresholds for non-skin tone detection
+      const brightness = (r + g + b) / 3;
+      const maxChannel = Math.max(r, g, b);
+      const minChannel = Math.min(r, g, b);
+
+      // Conditions for non-skin tone
+      if (brightness > 250 || brightness < 10) return true; // Too bright or too dark
+      if (maxChannel - minChannel > 170) return true; // High contrast, likely a non-skin color
+
+      return false;
+    };
+
+    if (isNonSkinTone(r, g, b)) {
+      return "No skin tone detected";
+    }
+
+    // Refine skin tone ranges
     if (r > 200 && g > 160 && b > 120) return "🧑🏻‍🦲 (Light)";
     if (r > 180 && g > 140 && b > 100) return "🧑🏼‍🦲 (Medium Light)";
     if (r > 160 && g > 120 && b > 80) return "🧑🏽‍🦲 (Medium)";
@@ -81,7 +102,7 @@ const SkinToneSelector = () => {
             <p className="text-gray-600 text-lg mb-4">Please upload an image</p>
             <label
               htmlFor="fileInput"
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer"
+              className="bg-slate-500 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded cursor-pointer"
             >
               Upload Image
             </label>
