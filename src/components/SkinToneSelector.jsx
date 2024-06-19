@@ -30,10 +30,15 @@ const SkinToneSelector = () => {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext("2d");
       const img = imageRef.current;
-      const maxHeight =
-        window.innerHeight - canvas.parentElement.offsetTop - 32; // 32 for padding and margins
+      const maxWidth = window.innerWidth * 0.8; // 90% of the viewport width
+      const maxHeight = window.innerHeight * 0.8; // 80% of the viewport height
       let width = img.width;
       let height = img.height;
+
+      if (width > maxWidth) {
+        height *= maxWidth / width;
+        width = maxWidth;
+      }
 
       if (height > maxHeight) {
         width *= maxHeight / height;
@@ -69,8 +74,8 @@ const SkinToneSelector = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen">
-      <div className="max-w-4xl w-full bg-white rounded-lg p-8">
+    <div className="flex flex-col justify-center items-center min-h-screen">
+      <div className="w-full max-w-4xl p-4 md:p-8">
         {!imageUploaded && (
           <div className="text-center">
             <p className="text-gray-600 text-lg mb-4">Please upload an image</p>
@@ -99,7 +104,8 @@ const SkinToneSelector = () => {
             ></canvas>
             <div className="text-center">
               <p className="text-gray-600">Selected Color: {selectedColor}</p>
-              <p className="text-gray-600 text-2xl">Suggested Emoji: {emoji}</p>
+              <p className="text-gray-600 text-2xl">Suggested Emoji:</p>
+              <p className="text-gray-600 text-4xl">{emoji}</p>
             </div>
           </div>
         )}

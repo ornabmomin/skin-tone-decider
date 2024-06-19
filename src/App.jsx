@@ -3,7 +3,7 @@ import SkinToneSelector from "./components/SkinToneSelector";
 
 function App() {
   return (
-    <div className="App">
+    <div>
       <main>
         <SkinToneSelector />
       </main>
