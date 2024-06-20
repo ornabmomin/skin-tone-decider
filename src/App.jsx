@@ -1,4 +1,3 @@
-import "./App.css";
 import SkinToneSelector from "./components/SkinToneSelector";
 
 function App() {

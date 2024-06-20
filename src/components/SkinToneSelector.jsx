@@ -1,4 +1,8 @@
 import { useState, useRef, useEffect } from "react";
+import UploadBox from "./UploadBox";
+import Canvas from "./Canvas";
+import ClickPrompt from "./ClickPrompt";
+import ColourInfo from "./ColourInfo";
 
 const SkinToneSelector = () => {
   const [selectedColor, setSelectedColor] = useState("");
@@ -30,7 +34,7 @@ const SkinToneSelector = () => {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext("2d");
       const img = imageRef.current;
-      const maxWidth = window.innerWidth * 0.8; // 90% of the viewport width
+      const maxWidth = window.innerWidth * 0.8; // 80% of the viewport width
       const maxHeight = window.innerHeight * 0.8; // 80% of the viewport height
       let width = img.width;
       let height = img.height;
@@ -95,38 +99,26 @@ const SkinToneSelector = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen">
+    <div className="flex flex-col justify-center items-center min-h-screen bg-slate-950">
       <div className="w-full max-w-4xl p-4 md:p-8">
         {!imageUploaded && (
-          <div className="text-center">
-            <p className="text-gray-600 text-lg mb-4">Please upload an image</p>
-            <label
-              htmlFor="fileInput"
-              className="bg-slate-500 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded cursor-pointer"
-            >
-              Upload Image
-            </label>
-            <input
-              id="fileInput"
-              type="file"
-              ref={fileInputRef}
-              accept="image/*"
-              onChange={handleImageUpload}
-              className="hidden"
-            />
-          </div>
+          <UploadBox
+            handleImageUpload={handleImageUpload}
+            ref={fileInputRef}
+            title="Upload an image to get started"
+            prompt="Choose Image"
+            subtitle="Supported formats: JPG, PNG, GIF"
+          />
         )}
         {imageUploaded && (
-          <div className="flex flex-col items-center">
-            <canvas
-              ref={canvasRef}
-              onClick={handleCanvasClick}
-              className="border border-gray-300 rounded-md mb-4"
-            ></canvas>
-            <div className="text-center">
-              <p className="text-gray-600">Selected Color: {selectedColor}</p>
-              <p className="text-gray-600 text-2xl">Suggested Emoji:</p>
-              <p className="text-gray-600 text-4xl">{emoji}</p>
+          <div className="flex flex-col items-center max-h-svh">
+            <Canvas ref={canvasRef} handleCanvasClick={handleCanvasClick} />
+            <div className="text-center bg-gray-300 p-6 rounded-lg shadow-md w-80 h-48 flex flex-col justify-center">
+              {emoji === "" ? (
+                <ClickPrompt text="Click on the picture to sample a skin tone." />
+              ) : (
+                <ColourInfo selectedColor={selectedColor} emoji={emoji} />
+              )}
             </div>
           </div>
         )}
