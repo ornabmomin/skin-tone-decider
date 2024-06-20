@@ -1,9 +1,17 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import PropTypes from "prop-types";
+import UploadBox from "./UploadBox";
+import Canvas from "./Canvas";
+import ClickPrompt from "./ClickPrompt";
+import ColourInfo from "./ColourInfo";
+import getSkinTone from "../utils/getSkinTone";
 
-const SkinToneSelector = () => {
+const SkinToneSelector = ({ setImageUploaded }) => {
   const [selectedColor, setSelectedColor] = useState("");
   const [emoji, setEmoji] = useState("");
-  const [imageUploaded, setImageUploaded] = useState(false);
+  const [imageUploaded, setLocalImageUploaded] = useState(false);
+  const [lastClickPosition, setLastClickPosition] = useState(null);
+
   const canvasRef = useRef(null);
   const imageRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -12,6 +20,7 @@ const SkinToneSelector = () => {
     const file = event.target.files[0];
     const img = new Image();
     img.onload = () => {
+      setLocalImageUploaded(true);
       setImageUploaded(true);
       imageRef.current = img;
     };
@@ -25,13 +34,41 @@ const SkinToneSelector = () => {
     }
   };
 
-  useEffect(() => {
-    if (imageUploaded && canvasRef.current && imageRef.current) {
+  const drawImageAndSquare = useCallback(() => {
+    if (canvasRef.current && imageRef.current) {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext("2d");
       const img = imageRef.current;
-      const maxWidth = window.innerWidth * 0.8; // 90% of the viewport width
-      const maxHeight = window.innerHeight * 0.8; // 80% of the viewport height
+
+      // Clear the canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw the image
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      // Draw square if there is a last click position
+      if (lastClickPosition) {
+        const squareSize = 10;
+
+        ctx.strokeStyle = "white";
+        ctx.lineWidth = 2;
+
+        ctx.strokeRect(
+          lastClickPosition.x - squareSize / 2,
+          lastClickPosition.y - squareSize / 2,
+          squareSize,
+          squareSize
+        );
+      }
+    }
+  }, [lastClickPosition, canvasRef, imageRef]);
+
+  useEffect(() => {
+    if (imageUploaded && canvasRef.current && imageRef.current) {
+      const canvas = canvasRef.current;
+      const img = imageRef.current;
+      const maxWidth = window.innerWidth * 0.8;
+      const maxHeight = window.innerHeight * 0.75;
       let width = img.width;
       let height = img.height;
 
@@ -47,9 +84,10 @@ const SkinToneSelector = () => {
 
       canvas.width = width;
       canvas.height = height;
-      ctx.drawImage(img, 0, 0, width, height);
+
+      drawImageAndSquare();
     }
-  }, [imageUploaded]);
+  }, [imageUploaded, lastClickPosition, drawImageAndSquare]);
 
   const handleCanvasClick = (event) => {
     const canvas = canvasRef.current;
@@ -63,76 +101,51 @@ const SkinToneSelector = () => {
     setSelectedColor(rgb);
     const skinTone = getSkinTone(imageData[0], imageData[1], imageData[2]);
     setEmoji(skinTone);
-  };
 
-  const getSkinTone = (r, g, b) => {
-    // Check for non-skin tone colors
-    const isNonSkinTone = (r, g, b) => {
-      if (r < g || r < b) return true;
-
-      // Define thresholds for non-skin tone detection
-      const brightness = (r + g + b) / 3;
-      const maxChannel = Math.max(r, g, b);
-      const minChannel = Math.min(r, g, b);
-
-      // Conditions for non-skin tone
-      if (brightness > 250 || brightness < 10) return true; // Too bright or too dark
-      if (maxChannel - minChannel > 170) return true; // High contrast, likely a non-skin color
-
-      return false;
-    };
-
-    if (isNonSkinTone(r, g, b)) {
-      return "No skin tone detected";
-    }
-
-    // Refine skin tone ranges
-    if (r > 200 && g > 160 && b > 120) return "🧑🏻‍🦲 (Light)";
-    if (r > 180 && g > 140 && b > 100) return "🧑🏼‍🦲 (Medium Light)";
-    if (r > 160 && g > 120 && b > 80) return "🧑🏽‍🦲 (Medium)";
-    if (r > 120 && g > 80 && b > 60) return "🧑🏾‍🦲 (Medium Dark)";
-    return "🧑🏿‍🦲 (Dark)";
+    setLastClickPosition({ x, y });
   };
 
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen">
+    <div
+      className={`flex flex-col items-center min-h-screen bg-slate-950 ${
+        imageUploaded ? "justify-center" : "justify-center"
+      } md:justify-center`}
+    >
       <div className="w-full max-w-4xl p-4 md:p-8">
-        {!imageUploaded && (
-          <div className="text-center">
-            <p className="text-gray-600 text-lg mb-4">Please upload an image</p>
-            <label
-              htmlFor="fileInput"
-              className="bg-slate-500 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded cursor-pointer"
-            >
-              Upload Image
-            </label>
-            <input
-              id="fileInput"
-              type="file"
-              ref={fileInputRef}
-              accept="image/*"
-              onChange={handleImageUpload}
-              className="hidden"
-            />
-          </div>
-        )}
-        {imageUploaded && (
-          <div className="flex flex-col items-center">
-            <canvas
+        {imageUploaded ? (
+          <div className="flex flex-col items-center max-h-svh">
+            <Canvas
               ref={canvasRef}
-              onClick={handleCanvasClick}
-              className="border border-gray-300 rounded-md mb-4"
-            ></canvas>
-            <div className="text-center">
-              <p className="text-gray-600">Selected Color: {selectedColor}</p>
-              <p className="text-gray-600 text-2xl">Suggested Emoji:</p>
-              <p className="text-gray-600 text-4xl">{emoji}</p>
+              handleCanvasClick={handleCanvasClick}
+              className="rounded-xl mb-4"
+            />
+            <div className="text-center bg-purple-50 p-4 rounded-lg shadow-md w-80 h-38 flex flex-col justify-center">
+              {emoji === "" ? (
+                <ClickPrompt
+                  text="Click on the picture to sample a skin tone."
+                  className="text-gray-600 text-2xl"
+                />
+              ) : (
+                <ColourInfo selectedColor={selectedColor} emoji={emoji} />
+              )}
             </div>
           </div>
+        ) : (
+          <UploadBox
+            handleImageUpload={handleImageUpload}
+            ref={fileInputRef}
+            title="Upload an image to get started"
+            prompt="Choose Image"
+            subtitle="Supported formats: JPG, PNG, GIF"
+          />
         )}
       </div>
     </div>
   );
+};
+
+SkinToneSelector.propTypes = {
+  setImageUploaded: PropTypes.func.isRequired,
 };
 
 export default SkinToneSelector;
