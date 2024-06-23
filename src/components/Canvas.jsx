@@ -1,14 +1,8 @@
 import PropTypes from "prop-types";
 import { forwardRef } from "react";
 
-const Canvas = forwardRef(({ handleCanvasClick }, ref) => {
-  return (
-    <canvas
-      ref={ref}
-      onClick={handleCanvasClick}
-      className="rounded-xl mb-4"
-    ></canvas>
-  );
+const Canvas = forwardRef(({ handleCanvasClick, ...props }, ref) => {
+  return <canvas ref={ref} onClick={handleCanvasClick} {...props}></canvas>;
 });
 
 Canvas.displayName = "Canvas";
