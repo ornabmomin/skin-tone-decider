@@ -1,6 +1,6 @@
 import { PropTypes } from "prop-types";
-const ClickPrompt = ({ text }) => {
-  return <p className="text-gray-600 text-2xl">{text}</p>;
+const ClickPrompt = ({ text, ...props }) => {
+  return <p {...props}>{text}</p>;
 };
 
 ClickPrompt.propTypes = {
