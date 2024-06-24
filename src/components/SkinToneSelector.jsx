@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import UploadBox from "./UploadBox";
 import Canvas from "./Canvas";
 import ClickPrompt from "./ClickPrompt";
@@ -9,6 +9,8 @@ const SkinToneSelector = () => {
   const [selectedColor, setSelectedColor] = useState("");
   const [emoji, setEmoji] = useState("");
   const [imageUploaded, setImageUploaded] = useState(false);
+  const [lastClickPosition, setLastClickPosition] = useState(null);
+
   const canvasRef = useRef(null);
   const imageRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -30,10 +32,38 @@ const SkinToneSelector = () => {
     }
   };
 
+  const drawImageAndSquare = useCallback(() => {
+    if (canvasRef.current && imageRef.current) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext("2d");
+      const img = imageRef.current;
+
+      // Clear the canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw the image
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      // Draw square if there is a last click position
+      if (lastClickPosition) {
+        const squareSize = 10;
+
+        ctx.strokeStyle = "white";
+        ctx.lineWidth = 2;
+
+        ctx.strokeRect(
+          lastClickPosition.x - squareSize / 2,
+          lastClickPosition.y - squareSize / 2,
+          squareSize,
+          squareSize
+        );
+      }
+    }
+  }, [lastClickPosition, canvasRef, imageRef]);
+
   useEffect(() => {
     if (imageUploaded && canvasRef.current && imageRef.current) {
       const canvas = canvasRef.current;
-      const ctx = canvas.getContext("2d");
       const img = imageRef.current;
       const maxWidth = window.innerWidth * 0.8; // 80% of the viewport width
       const maxHeight = window.innerHeight * 0.75; // 80% of the viewport height
@@ -52,9 +82,10 @@ const SkinToneSelector = () => {
 
       canvas.width = width;
       canvas.height = height;
-      ctx.drawImage(img, 0, 0, width, height);
+
+      drawImageAndSquare();
     }
-  }, [imageUploaded]);
+  }, [imageUploaded, lastClickPosition, drawImageAndSquare]);
 
   const handleCanvasClick = (event) => {
     const canvas = canvasRef.current;
@@ -68,6 +99,8 @@ const SkinToneSelector = () => {
     setSelectedColor(rgb);
     const skinTone = getSkinTone(imageData[0], imageData[1], imageData[2]);
     setEmoji(skinTone);
+
+    setLastClickPosition({ x, y });
   };
 
   return (
