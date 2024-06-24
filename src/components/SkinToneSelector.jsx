@@ -1,14 +1,15 @@
 import { useState, useRef, useEffect, useCallback } from "react";
+import PropTypes from "prop-types";
 import UploadBox from "./UploadBox";
 import Canvas from "./Canvas";
 import ClickPrompt from "./ClickPrompt";
 import ColourInfo from "./ColourInfo";
 import getSkinTone from "../utils/getSkinTone";
 
-const SkinToneSelector = () => {
+const SkinToneSelector = ({ setImageUploaded }) => {
   const [selectedColor, setSelectedColor] = useState("");
   const [emoji, setEmoji] = useState("");
-  const [imageUploaded, setImageUploaded] = useState(false);
+  const [imageUploaded, setLocalImageUploaded] = useState(false);
   const [lastClickPosition, setLastClickPosition] = useState(null);
 
   const canvasRef = useRef(null);
@@ -19,6 +20,7 @@ const SkinToneSelector = () => {
     const file = event.target.files[0];
     const img = new Image();
     img.onload = () => {
+      setLocalImageUploaded(true);
       setImageUploaded(true);
       imageRef.current = img;
     };
@@ -65,8 +67,8 @@ const SkinToneSelector = () => {
     if (imageUploaded && canvasRef.current && imageRef.current) {
       const canvas = canvasRef.current;
       const img = imageRef.current;
-      const maxWidth = window.innerWidth * 0.8; // 80% of the viewport width
-      const maxHeight = window.innerHeight * 0.75; // 80% of the viewport height
+      const maxWidth = window.innerWidth * 0.8;
+      const maxHeight = window.innerHeight * 0.75;
       let width = img.width;
       let height = img.height;
 
@@ -140,6 +142,10 @@ const SkinToneSelector = () => {
       </div>
     </div>
   );
+};
+
+SkinToneSelector.propTypes = {
+  setImageUploaded: PropTypes.func.isRequired,
 };
 
 export default SkinToneSelector;

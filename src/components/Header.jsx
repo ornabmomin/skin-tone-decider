@@ -1,7 +1,9 @@
 import { useState } from "react";
+import PropTypes from "prop-types";
 import Modal from "./Modal";
+import logo from "../assets/sts-logo.png";
 
-const Header = () => {
+const Header = ({ imageUploaded }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const toggleModal = () => {
@@ -11,7 +13,19 @@ const Header = () => {
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-10">
-        <div className="container mx-auto px-4 py-2 flex justify-end">
+        <div className="container mx-auto px-4 py-2 flex justify-between items-center">
+          <div className="flex items-center">
+            <img
+              src={logo}
+              alt="Logo"
+              className={`${
+                imageUploaded ? "w-12 h-12" : "w-24 h-24"
+              } rounded-full mr-2`}
+            />
+            <span className="text-lg font-bold text-white">
+              Skin Tone Decider
+            </span>
+          </div>
           <button
             onClick={toggleModal}
             className="text-white hover:text-gray-200 focus:outline-none"
@@ -37,6 +51,10 @@ const Header = () => {
       {isModalOpen && <Modal toggleModal={toggleModal} />}
     </>
   );
+};
+
+Header.propTypes = {
+  imageUploaded: PropTypes.bool.isRequired,
 };
 
 export default Header;
