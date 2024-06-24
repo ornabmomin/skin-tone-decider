@@ -9,7 +9,10 @@ function App() {
     <div className="flex flex-col">
       <Header imageUploaded={imageUploaded} />
       <main className="">
-        <SkinToneSelector setImageUploaded={setImageUploaded} />
+        <SkinToneSelector
+          setImageUploaded={setImageUploaded}
+          imageUploaded={imageUploaded}
+        />
       </main>
     </div>
   );
