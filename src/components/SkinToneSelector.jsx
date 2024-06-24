@@ -73,7 +73,7 @@ const SkinToneSelector = () => {
   return (
     <div
       className={`flex flex-col items-center min-h-screen bg-slate-950 ${
-        imageUploaded ? "justify-top" : "justify-center"
+        imageUploaded ? "justify-center" : "justify-center"
       } md:justify-center`}
     >
       <div className="w-full max-w-4xl p-4 md:p-8">
