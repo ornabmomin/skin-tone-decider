@@ -6,10 +6,9 @@ import ClickPrompt from "./ClickPrompt";
 import ColourInfo from "./ColourInfo";
 import getSkinTone from "../utils/getSkinTone";
 
-const SkinToneSelector = ({ setImageUploaded }) => {
+const SkinToneSelector = ({ setImageUploaded, imageUploaded }) => {
   const [selectedColor, setSelectedColor] = useState("");
   const [emoji, setEmoji] = useState("");
-  const [imageUploaded, setLocalImageUploaded] = useState(false);
   const [lastClickPosition, setLastClickPosition] = useState(null);
 
   const canvasRef = useRef(null);
@@ -20,7 +19,6 @@ const SkinToneSelector = ({ setImageUploaded }) => {
     const file = event.target.files[0];
     const img = new Image();
     img.onload = () => {
-      setLocalImageUploaded(true);
       setImageUploaded(true);
       imageRef.current = img;
     };
@@ -134,7 +132,7 @@ const SkinToneSelector = ({ setImageUploaded }) => {
           <UploadBox
             handleImageUpload={handleImageUpload}
             ref={fileInputRef}
-            title="Upload an image to get started"
+            title="Select an image to get started"
             prompt="Choose Image"
             subtitle="Supported formats: JPG, PNG, GIF"
           />
@@ -146,6 +144,7 @@ const SkinToneSelector = ({ setImageUploaded }) => {
 
 SkinToneSelector.propTypes = {
   setImageUploaded: PropTypes.func.isRequired,
+  imageUploaded: PropTypes.bool.isRequired,
 };
 
 export default SkinToneSelector;
