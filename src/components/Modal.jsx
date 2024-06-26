@@ -10,9 +10,9 @@ const Modal = ({ toggleModal }) => {
           </h2>
           <div className="text-gray-600 dark:text-gray-300">
             <p className="pb-4">
-              <p className="display: inline italic">Skin Tone Decider</p> is an
-              educational tool that seeks to help people decide which skin tone
-              they should choose for their emojis.
+              <span className="display: inline italic">Skin Tone Decider</span>{" "}
+              is an educational tool that seeks to help people decide which skin
+              tone they should choose for their emojis.
             </p>
             <p className="pb-4">
               None of this has been fact checked by anyone or anything. I do not

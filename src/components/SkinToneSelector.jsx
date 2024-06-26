@@ -8,7 +8,7 @@ import getSkinTone from "../utils/getSkinTone";
 
 const SkinToneSelector = ({ setImageUploaded, imageUploaded }) => {
   const [selectedColor, setSelectedColor] = useState("");
-  const [emoji, setEmoji] = useState("");
+  const [skinTone, setSkinTone] = useState("");
   const [lastClickPosition, setLastClickPosition] = useState(null);
 
   const canvasRef = useRef(null);
@@ -32,6 +32,8 @@ const SkinToneSelector = ({ setImageUploaded, imageUploaded }) => {
     }
   };
 
+  const sampleSize = 15;
+
   const drawImageAndSquare = useCallback(() => {
     if (canvasRef.current && imageRef.current) {
       const canvas = canvasRef.current;
@@ -46,7 +48,7 @@ const SkinToneSelector = ({ setImageUploaded, imageUploaded }) => {
 
       // Draw square if there is a last click position
       if (lastClickPosition) {
-        const squareSize = 10;
+        const squareSize = sampleSize;
 
         ctx.strokeStyle = "white";
         ctx.lineWidth = 2;
@@ -89,18 +91,54 @@ const SkinToneSelector = ({ setImageUploaded, imageUploaded }) => {
 
   const handleCanvasClick = (event) => {
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    const rect = canvas.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-    const imageData = ctx.getImageData(x, y, 1, 1).data;
-    const rgb = `rgb(${imageData[0]}, ${imageData[1]}, ${imageData[2]})`;
+    if (!canvas) {
+      console.error("Can't get canvas ref");
+      return;
+    }
 
-    setSelectedColor(rgb);
-    const skinTone = getSkinTone(imageData[0], imageData[1], imageData[2]);
-    setEmoji(skinTone);
+    const ctx = canvas.getContext("2d");
+    if (!ctx) {
+      console.error("Unable to get 2D context");
+      return;
+    }
+
+    const rect = canvas.getBoundingClientRect();
+    const x = Math.round(event.clientX - rect.left);
+    const y = Math.round(event.clientY - rect.top);
 
     setLastClickPosition({ x, y });
+
+    const imageData = ctx.getImageData(
+      Math.max(0, x - sampleSize / 2),
+      Math.max(0, y - sampleSize / 2),
+      Math.min(sampleSize, canvas.width - x + sampleSize / 2),
+      Math.min(sampleSize, canvas.height - y + sampleSize / 2)
+    );
+
+    // Calculate average color
+    let r = 0,
+      g = 0,
+      b = 0;
+
+    // Increment by 4 to skip the alpha channel
+    for (let i = 0; i < imageData.data.length; i += 4) {
+      r += imageData.data[i];
+      g += imageData.data[i + 1];
+      b += imageData.data[i + 2];
+    }
+    const pixelCount = imageData.data.length / 4; // Divide by 4 to get the number of pixels in the square
+
+    r = Math.round(r / pixelCount);
+    g = Math.round(g / pixelCount);
+    b = Math.round(b / pixelCount);
+
+    const rgb = `rgb(${r}, ${g}, ${b})`;
+    console.log(imageData);
+    console.log("Average RGB color:", rgb);
+
+    setSelectedColor(rgb);
+    const skinTone = getSkinTone(r, g, b);
+    setSkinTone(skinTone);
   };
 
   return (
@@ -118,13 +156,13 @@ const SkinToneSelector = ({ setImageUploaded, imageUploaded }) => {
               className="rounded-xl mb-4"
             />
             <div className="text-center bg-purple-50 p-4 rounded-lg shadow-md w-80 h-38 flex flex-col justify-center">
-              {emoji === "" ? (
+              {skinTone === "" ? (
                 <ClickPrompt
                   text="Click on the picture to sample a skin tone."
                   className="text-gray-600 text-2xl"
                 />
               ) : (
-                <ColourInfo selectedColor={selectedColor} emoji={emoji} />
+                <ColourInfo selectedColor={selectedColor} skinTone={skinTone} />
               )}
             </div>
           </div>
