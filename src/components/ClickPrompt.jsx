@@ -1,4 +1,5 @@
 import { PropTypes } from "prop-types";
+
 const ClickPrompt = ({ text, ...props }) => {
   return <p {...props}>{text}</p>;
 };
