@@ -33,6 +33,8 @@ const Header = ({ imageUploaded }) => {
           <button
             onClick={toggleModal}
             className="text-white hover:text-gray-200 focus:outline-none"
+            id="Info"
+            aria-label="Info"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
