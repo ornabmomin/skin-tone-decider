@@ -2,14 +2,14 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 import UploadBox from "./UploadBox";
 import Canvas from "./Canvas";
-import ClickPrompt from "./ClickPrompt";
 import ColourInfo from "./ColourInfo";
 import getSkinTone from "../utils/getSkinTone";
 
-const SkinToneSelector = ({ setImageUploaded, imageUploaded, sampleSize }) => {
+const SkinToneSelector = ({ setImageUploaded, imageUploaded }) => {
   const [selectedColor, setSelectedColor] = useState("");
-  const [skinTone, setSkinTone] = useState("");
+  const [skinTone, setSkinTone] = useState({ emoji: null, tone: null });
   const [lastClickPosition, setLastClickPosition] = useState(null);
+  const [sampleSize, setSampleSize] = useState(15);
 
   const canvasRef = useRef(null);
   const imageRef = useRef(null);
@@ -60,6 +60,11 @@ const SkinToneSelector = ({ setImageUploaded, imageUploaded, sampleSize }) => {
       }
     }
   }, [lastClickPosition, canvasRef, imageRef, sampleSize]);
+
+  const handleSampleSizeChange = (newSize) => {
+    setSampleSize(newSize);
+    drawImageAndSquare();
+  };
 
   useEffect(() => {
     if (imageUploaded && canvasRef.current && imageRef.current) {
@@ -154,14 +159,12 @@ const SkinToneSelector = ({ setImageUploaded, imageUploaded, sampleSize }) => {
               className="rounded-xl mb-4"
             />
             <div className="text-center bg-purple-50 p-4 rounded-lg shadow-md w-80 h-38 flex flex-col justify-center">
-              {skinTone === "" ? (
-                <ClickPrompt
-                  text="Click on the picture to sample a skin tone."
-                  className="text-gray-600 text-2xl"
-                />
-              ) : (
-                <ColourInfo selectedColor={selectedColor} skinTone={skinTone} />
-              )}
+              <ColourInfo
+                selectedColor={selectedColor}
+                skinTone={skinTone}
+                sampleSize={sampleSize}
+                onSampleSizeChange={handleSampleSizeChange}
+              />
             </div>
           </div>
         ) : (
@@ -181,7 +184,6 @@ const SkinToneSelector = ({ setImageUploaded, imageUploaded, sampleSize }) => {
 SkinToneSelector.propTypes = {
   setImageUploaded: PropTypes.func.isRequired,
   imageUploaded: PropTypes.bool.isRequired,
-  sampleSize: PropTypes.number.isRequired,
 };
 
 export default SkinToneSelector;
