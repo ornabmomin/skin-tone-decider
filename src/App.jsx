@@ -12,6 +12,7 @@ function App() {
         <SkinToneSelector
           setImageUploaded={setImageUploaded}
           imageUploaded={imageUploaded}
+          sampleSize={15}
         />
       </main>
     </div>
