@@ -63,7 +63,7 @@ const SkinToneSelector = ({ setImageUploaded, imageUploaded }) => {
           ctx.fillStyle = "white";
           ctx.textAlign = "center";
           ctx.fillText(
-            `R: ${averageRGB.r}, G: ${averageRGB.g}, B: ${averageRGB.b}`,
+            `R: ${averageRGB.r} G: ${averageRGB.g} B: ${averageRGB.b}`,
             lastClickPosition.x,
             y - 10
           );
@@ -160,11 +160,7 @@ const SkinToneSelector = ({ setImageUploaded, imageUploaded }) => {
   };
 
   return (
-    <div
-      className={`flex flex-col items-center min-h-screen bg-slate-950 ${
-        imageUploaded ? "justify-center" : "justify-center"
-      } md:justify-center`}
-    >
+    <div className="flex flex-col items-center min-h-svh justify-center">
       <div className="w-full max-w-4xl p-4 md:p-8">
         {imageUploaded ? (
           <div className="flex flex-col items-center max-h-svh">
