@@ -1,6 +1,11 @@
 import PropTypes from "prop-types";
 
-const ColourInfo = ({ skinTone, sampleSize, onSampleSizeChange }) => {
+const ColourInfo = ({
+  skinTone,
+  sampleSize,
+  onSampleSizeChange,
+  maxSampleSize,
+}) => {
   const renderErrorMessage = () => {
     if (skinTone.emoji === null) {
       return "Click on the picture to sample a skin tone.";
@@ -29,7 +34,7 @@ const ColourInfo = ({ skinTone, sampleSize, onSampleSizeChange }) => {
               id="sampleSize"
               name="sampleSize"
               min="5"
-              max="100"
+              max={maxSampleSize}
               step="5"
               value={sampleSize}
               onChange={(event) =>
@@ -57,6 +62,7 @@ ColourInfo.propTypes = {
   skinTone: PropTypes.object,
   sampleSize: PropTypes.number,
   onSampleSizeChange: PropTypes.func,
+  maxSampleSize: PropTypes.number,
 };
 
 export default ColourInfo;

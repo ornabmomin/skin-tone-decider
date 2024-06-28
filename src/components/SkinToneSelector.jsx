@@ -9,7 +9,9 @@ const SkinToneSelector = ({ setImageUploaded, imageUploaded }) => {
   const [selectedColor, setSelectedColor] = useState("");
   const [skinTone, setSkinTone] = useState({ emoji: null, tone: null });
   const [lastClickPosition, setLastClickPosition] = useState(null);
-  const [sampleSize, setSampleSize] = useState(15);
+  const [sampleSize, setSampleSize] = useState(20);
+  const [maxSampleSize, setMaxSampleSize] = useState(50);
+  const [averageRGB, setAverageRGB] = useState(null);
 
   const canvasRef = useRef(null);
   const imageRef = useRef(null);
@@ -48,18 +50,27 @@ const SkinToneSelector = ({ setImageUploaded, imageUploaded }) => {
       if (lastClickPosition) {
         const squareSize = sampleSize;
 
+        const x = lastClickPosition.x - squareSize / 2;
+        const y = lastClickPosition.y - squareSize / 2;
+
         ctx.strokeStyle = "white";
         ctx.lineWidth = 2;
 
-        ctx.strokeRect(
-          lastClickPosition.x - squareSize / 2,
-          lastClickPosition.y - squareSize / 2,
-          squareSize,
-          squareSize
-        );
+        ctx.strokeRect(x, y, squareSize, squareSize);
+
+        if (averageRGB) {
+          ctx.font = "10px Courier";
+          ctx.fillStyle = "white";
+          ctx.textAlign = "center";
+          ctx.fillText(
+            `R: ${averageRGB.r}, G: ${averageRGB.g}, B: ${averageRGB.b}`,
+            lastClickPosition.x,
+            y - 10
+          );
+        }
       }
     }
-  }, [lastClickPosition, canvasRef, imageRef, sampleSize]);
+  }, [lastClickPosition, canvasRef, imageRef, sampleSize, averageRGB]);
 
   const handleSampleSizeChange = (newSize) => {
     setSampleSize(newSize);
@@ -88,6 +99,8 @@ const SkinToneSelector = ({ setImageUploaded, imageUploaded }) => {
       canvas.width = width;
       canvas.height = height;
 
+      setMaxSampleSize(Math.floor(width / 4));
+
       drawImageAndSquare();
     }
   }, [imageUploaded, lastClickPosition, drawImageAndSquare]);
@@ -111,11 +124,12 @@ const SkinToneSelector = ({ setImageUploaded, imageUploaded }) => {
 
     setLastClickPosition({ x, y });
 
+    const halfSampleSize = Math.floor(sampleSize / 2);
     const imageData = ctx.getImageData(
-      Math.max(0, x - sampleSize / 2),
-      Math.max(0, y - sampleSize / 2),
-      Math.min(sampleSize, canvas.width - x + sampleSize / 2),
-      Math.min(sampleSize, canvas.height - y + sampleSize / 2)
+      Math.max(0, x - halfSampleSize),
+      Math.max(0, y - halfSampleSize),
+      Math.min(sampleSize, canvas.width - x + halfSampleSize),
+      Math.min(sampleSize, canvas.height - y + halfSampleSize)
     );
 
     // Calculate average color
@@ -140,6 +154,7 @@ const SkinToneSelector = ({ setImageUploaded, imageUploaded }) => {
     console.log("Average RGB color:", rgb);
 
     setSelectedColor(rgb);
+    setAverageRGB({ r, g, b });
     const skinTone = getSkinTone(r, g, b);
     setSkinTone(skinTone);
   };
@@ -164,6 +179,7 @@ const SkinToneSelector = ({ setImageUploaded, imageUploaded }) => {
                 skinTone={skinTone}
                 sampleSize={sampleSize}
                 onSampleSizeChange={handleSampleSizeChange}
+                maxSampleSize={maxSampleSize}
               />
             </div>
           </div>
