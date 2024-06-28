@@ -16,7 +16,7 @@ const getSkinTone = (r, g, b) => {
   };
 
   if (isNonSkinTone(r, g, b)) {
-    return "No skin tone detected";
+    return { emoji: "", tone: "" };
   }
 
   // Refine skin tone ranges
