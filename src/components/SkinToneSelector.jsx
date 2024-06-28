@@ -6,7 +6,7 @@ import ClickPrompt from "./ClickPrompt";
 import ColourInfo from "./ColourInfo";
 import getSkinTone from "../utils/getSkinTone";
 
-const SkinToneSelector = ({ setImageUploaded, imageUploaded }) => {
+const SkinToneSelector = ({ setImageUploaded, imageUploaded, sampleSize }) => {
   const [selectedColor, setSelectedColor] = useState("");
   const [skinTone, setSkinTone] = useState("");
   const [lastClickPosition, setLastClickPosition] = useState(null);
@@ -25,14 +25,12 @@ const SkinToneSelector = ({ setImageUploaded, imageUploaded }) => {
 
     if (file) {
       const reader = new FileReader();
-      reader.onload = (e) => {
-        img.src = e.target.result;
+      reader.onload = (event) => {
+        img.src = event.target.result;
       };
       reader.readAsDataURL(file);
     }
   };
-
-  const sampleSize = 15;
 
   const drawImageAndSquare = useCallback(() => {
     if (canvasRef.current && imageRef.current) {
@@ -61,7 +59,7 @@ const SkinToneSelector = ({ setImageUploaded, imageUploaded }) => {
         );
       }
     }
-  }, [lastClickPosition, canvasRef, imageRef]);
+  }, [lastClickPosition, canvasRef, imageRef, sampleSize]);
 
   useEffect(() => {
     if (imageUploaded && canvasRef.current && imageRef.current) {
@@ -183,6 +181,7 @@ const SkinToneSelector = ({ setImageUploaded, imageUploaded }) => {
 SkinToneSelector.propTypes = {
   setImageUploaded: PropTypes.func.isRequired,
   imageUploaded: PropTypes.bool.isRequired,
+  sampleSize: PropTypes.number.isRequired,
 };
 
 export default SkinToneSelector;
