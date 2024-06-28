@@ -21,7 +21,7 @@ const ColourInfo = ({
   return (
     <div className="flex flex-col items-center">
       {errorMessage && (
-        <p className="text-xl md:text-2xl text-center py-8">{errorMessage}</p>
+        <p className="text-lg md:text-2xl text-center py-6">{errorMessage}</p>
       )}
       {skinTone.emoji && (
         <div className="flex w-full">
