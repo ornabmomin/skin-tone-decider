@@ -22,17 +22,18 @@ const ColourInfo = () => {
     useContext(SkinToneContext);
 
   const [currentEmojiIndex, setCurrentEmojiIndex] = useState(0);
-  const touchStartX = useRef(null);
+  const startX = useRef(null);
+  const isDragging = useRef(false);
 
-  const handleTouchStart = (e) => {
-    touchStartX.current = e.touches[0].clientX;
+  const handleStart = (clientX) => {
+    startX.current = clientX;
+    isDragging.current = true;
   };
 
-  const handleTouchEnd = (e) => {
-    if (touchStartX.current === null) return;
+  const handleEnd = (clientX) => {
+    if (!isDragging.current) return;
 
-    const touchEndX = e.changedTouches[0].clientX;
-    const diff = touchStartX.current - touchEndX;
+    const diff = startX.current - clientX;
 
     if (Math.abs(diff) > 50) {
       // Minimum swipe distance
@@ -51,7 +52,30 @@ const ColourInfo = () => {
       }
     }
 
-    touchStartX.current = null;
+    startX.current = null;
+    isDragging.current = false;
+  };
+
+  const handleTouchStart = (event) => {
+    handleStart(event.touches[0].clientX);
+  };
+
+  const handleTouchEnd = (event) => {
+    handleEnd(event.changedTouches[0].clientX);
+  };
+
+  const handleMouseDown = (event) => {
+    handleStart(event.clientX);
+  };
+
+  const handleMouseUp = (event) => {
+    handleEnd(event.clientX);
+  };
+
+  const handleMouseLeave = (event) => {
+    if (isDragging.current) {
+      handleEnd(event.clientX);
+    }
   };
 
   const renderErrorMessage = () => {
@@ -79,9 +103,12 @@ const ColourInfo = () => {
         <div className="flex w-full">
           <div className="w-1/2 flex items-center justify-center flex-col">
             <p
-              className="text-gray-600 text-8xl select-none"
+              className="text-gray-600 text-8xl select-none cursor-grab active:cursor-grabbing"
               onTouchStart={handleTouchStart}
               onTouchEnd={handleTouchEnd}
+              onMouseDown={handleMouseDown}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseLeave}
             >
               {currentEmoji}
             </p>
