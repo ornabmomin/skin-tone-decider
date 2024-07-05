@@ -1,5 +1,5 @@
 import { SkinToneContext } from "../store/SkinToneContext";
-import { useContext, useRef, useState } from "react";
+import { useContext, useRef, useState, useEffect } from "react";
 
 const emojiWithSkinTones = [
   ["🧑", "🧑🏻", "🧑🏼", "🧑🏽", "🧑🏾", "🧑🏿"],
@@ -7,6 +7,7 @@ const emojiWithSkinTones = [
   ["👨", "👨🏻", "👨🏼", "👨🏽", "👨🏾", "👨🏿"],
   ["👶", "👶🏻", "👶🏼", "👶🏽", "👶🏾", "👶🏿"],
   ["🧓", "🧓🏻", "🧓🏼", "🧓🏽", "🧓🏾", "🧓🏿"],
+  ["🧔‍♀️", "🧔🏻‍♀️", "🧔🏼‍♀️", "🧔🏽‍♀️", "🧔🏾‍♀️", "🧔🏿‍♀️"],
 ];
 
 const skinToneMap = {
@@ -22,8 +23,16 @@ const ColourInfo = () => {
     useContext(SkinToneContext);
 
   const [currentEmojiIndex, setCurrentEmojiIndex] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
   const startX = useRef(null);
   const isDragging = useRef(false);
+
+  useEffect(() => {
+    if (isAnimating) {
+      const timer = setTimeout(() => setIsAnimating(false), 300); // Duration of animation
+      return () => clearTimeout(timer);
+    }
+  }, [isAnimating]);
 
   const handleStart = (clientX) => {
     startX.current = clientX;
@@ -50,6 +59,7 @@ const ColourInfo = () => {
             emojiWithSkinTones.length
         );
       }
+      setIsAnimating(true);
     }
 
     startX.current = null;
@@ -103,7 +113,9 @@ const ColourInfo = () => {
         <div className="flex w-full">
           <div className="w-1/2 flex items-center justify-center flex-col">
             <p
-              className="text-gray-600 text-8xl select-none cursor-grab active:cursor-grabbing"
+              className={`text-gray-600 text-8xl select-none cursor-grab active:cursor-grabbing transition-transform duration-300 ease-in-out ${
+                isAnimating ? "animate-emoji-pop" : ""
+              }`}
               onTouchStart={handleTouchStart}
               onTouchEnd={handleTouchEnd}
               onMouseDown={handleMouseDown}
