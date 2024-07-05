@@ -1,15 +1,14 @@
-import PropTypes from "prop-types";
+import { SkinToneContext } from "../store/SkinToneContext";
+import { useContext } from "react";
 
-const ColourInfo = ({
-  skinTone,
-  sampleSize,
-  onSampleSizeChange,
-  maxSampleSize,
-}) => {
+const ColourInfo = () => {
+  const { skinTone, sampleSize, setSampleSize, maxSampleSize } =
+    useContext(SkinToneContext);
+
   const renderErrorMessage = () => {
-    if (skinTone.emoji === null) {
+    if (skinTone.tone === null) {
       return "Click on the picture to sample a skin tone.";
-    } else if (skinTone.emoji === "") {
+    } else if (skinTone.tone === "") {
       return "⚠️ No skin tone detected ⚠️";
     } else {
       return null;
@@ -23,7 +22,7 @@ const ColourInfo = ({
       {errorMessage && (
         <p className="text-lg md:text-2xl text-center py-6">{errorMessage}</p>
       )}
-      {skinTone.emoji && (
+      {skinTone.tone && (
         <div className="flex w-full">
           <div className="w-1/2 flex items-center justify-center">
             <p className="text-gray-600 text-8xl">{skinTone.emoji}</p>
@@ -37,9 +36,7 @@ const ColourInfo = ({
               max={maxSampleSize}
               step="5"
               value={sampleSize}
-              onChange={(event) =>
-                onSampleSizeChange(Number(event.target.value))
-              }
+              onChange={(event) => setSampleSize(Number(event.target.value))}
               className="mt-1 w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
             />
             <label
@@ -56,13 +53,6 @@ const ColourInfo = ({
       )}
     </div>
   );
-};
-
-ColourInfo.propTypes = {
-  skinTone: PropTypes.object,
-  sampleSize: PropTypes.number,
-  onSampleSizeChange: PropTypes.func,
-  maxSampleSize: PropTypes.number,
 };
 
 export default ColourInfo;

@@ -1,9 +1,12 @@
-import { useState } from "react";
-import PropTypes from "prop-types";
+import { useContext, useState } from "react";
 import Modal from "./Modal";
 import logo from "/sts-logo.png";
+import { SkinToneContext } from "../store/SkinToneContext";
+import InfoIcon from "./ui/InfoIcon";
 
-const Header = ({ imageUploaded }) => {
+const Header = () => {
+  const { imageUploaded } = useContext(SkinToneContext);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const toggleModal = () => {
@@ -36,20 +39,7 @@ const Header = ({ imageUploaded }) => {
             id="Info"
             aria-label="Info"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
+            <InfoIcon />
           </button>
         </div>
       </header>
@@ -57,10 +47,6 @@ const Header = ({ imageUploaded }) => {
       {isModalOpen && <Modal toggleModal={toggleModal} />}
     </>
   );
-};
-
-Header.propTypes = {
-  imageUploaded: PropTypes.bool.isRequired,
 };
 
 export default Header;

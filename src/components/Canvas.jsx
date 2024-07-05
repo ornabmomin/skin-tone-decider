@@ -1,14 +1,14 @@
-import PropTypes from "prop-types";
-import { forwardRef } from "react";
+import { SkinToneContext } from "../store/SkinToneContext";
+import { useContext } from "react";
 
-const Canvas = forwardRef(({ handleCanvasClick, ...props }, ref) => {
-  return <canvas ref={ref} onClick={handleCanvasClick} {...props}></canvas>;
-});
+const Canvas = ({ ...props }) => {
+  const { handleCanvasClick, canvasRef } = useContext(SkinToneContext);
+
+  return (
+    <canvas ref={canvasRef} onClick={handleCanvasClick} {...props}></canvas>
+  );
+};
 
 Canvas.displayName = "Canvas";
-
-Canvas.propTypes = {
-  handleCanvasClick: PropTypes.func.isRequired,
-};
 
 export default Canvas;
