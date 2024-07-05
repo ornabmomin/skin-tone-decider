@@ -1,9 +1,11 @@
-import { useState } from "react";
-import PropTypes from "prop-types";
+import { useContext, useState } from "react";
 import Modal from "./Modal";
 import logo from "/sts-logo.png";
+import { SkinToneContext } from "../store/SkinToneContext";
 
-const Header = ({ imageUploaded }) => {
+const Header = () => {
+  const { imageUploaded } = useContext(SkinToneContext);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const toggleModal = () => {
@@ -57,10 +59,6 @@ const Header = ({ imageUploaded }) => {
       {isModalOpen && <Modal toggleModal={toggleModal} />}
     </>
   );
-};
-
-Header.propTypes = {
-  imageUploaded: PropTypes.bool.isRequired,
 };
 
 export default Header;
