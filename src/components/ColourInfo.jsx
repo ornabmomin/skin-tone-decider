@@ -1,22 +1,6 @@
 import { SkinToneContext } from "../store/SkinToneContext";
 import { useContext, useRef, useState, useEffect } from "react";
-
-const emojiWithSkinTones = [
-  ["🧑", "🧑🏻", "🧑🏼", "🧑🏽", "🧑🏾", "🧑🏿"],
-  ["👩", "👩🏻", "👩🏼", "👩🏽", "👩🏾", "👩🏿"],
-  ["👨", "👨🏻", "👨🏼", "👨🏽", "👨🏾", "👨🏿"],
-  ["👶", "👶🏻", "👶🏼", "👶🏽", "👶🏾", "👶🏿"],
-  ["🧓", "🧓🏻", "🧓🏼", "🧓🏽", "🧓🏾", "🧓🏿"],
-  ["🧔‍♀️", "🧔🏻‍♀️", "🧔🏼‍♀️", "🧔🏽‍♀️", "🧔🏾‍♀️", "🧔🏿‍♀️"],
-];
-
-const skinToneMap = {
-  Light: 1,
-  "Medium Light": 2,
-  Medium: 3,
-  "Medium Dark": 4,
-  Dark: 5,
-};
+import { emojisWithSkinTones, skinToneMap } from "../utils/emojis";
 
 const ColourInfo = () => {
   const { skinTone, sampleSize, setSampleSize, maxSampleSize } =
@@ -24,12 +8,13 @@ const ColourInfo = () => {
 
   const [currentEmojiIndex, setCurrentEmojiIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+
   const startX = useRef(null);
   const isDragging = useRef(false);
 
   useEffect(() => {
     if (isAnimating) {
-      const timer = setTimeout(() => setIsAnimating(false), 300); // Duration of animation
+      const timer = setTimeout(() => setIsAnimating(false), 300);
       return () => clearTimeout(timer);
     }
   }, [isAnimating]);
@@ -44,21 +29,22 @@ const ColourInfo = () => {
 
     const diff = startX.current - clientX;
 
+    let indexShift = 0;
+
     if (Math.abs(diff) > 50) {
       // Minimum swipe distance
       if (diff > 0) {
         // Swipe left
-        setCurrentEmojiIndex(
-          (prevIndex) => (prevIndex + 1) % emojiWithSkinTones.length
-        );
-      } else {
+        indexShift = 1;
+      } else if (diff < 0) {
         // Swipe right
-        setCurrentEmojiIndex(
-          (prevIndex) =>
-            (prevIndex - 1 + emojiWithSkinTones.length) %
-            emojiWithSkinTones.length
-        );
+        indexShift = -1;
       }
+      setCurrentEmojiIndex(
+        (prevIndex) =>
+          (prevIndex + indexShift + emojisWithSkinTones.length) %
+          emojisWithSkinTones.length
+      );
       setIsAnimating(true);
     }
 
@@ -101,8 +87,8 @@ const ColourInfo = () => {
   const errorMessage = renderErrorMessage();
 
   const currentEmoji = skinTone.tone
-    ? emojiWithSkinTones[currentEmojiIndex][skinToneMap[skinTone.tone] || 0]
-    : emojiWithSkinTones[currentEmojiIndex][0];
+    ? emojisWithSkinTones[currentEmojiIndex][skinToneMap[skinTone.tone] || 0]
+    : emojisWithSkinTones[currentEmojiIndex][0];
 
   return (
     <div className="flex flex-col items-center">
