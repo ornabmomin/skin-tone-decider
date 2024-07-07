@@ -16,20 +16,20 @@ const getSkinTone = (r, g, b) => {
   };
 
   if (isNonSkinTone(r, g, b)) {
-    return { emoji: "", tone: "" };
+    return { tone: "" };
   }
 
   // Refine skin tone ranges
   if (r > 200 && g > 160 && b > 120) {
-    return { emoji: "🧑🏻‍🦲", tone: "Light" };
+    return { tone: "Light" };
   } else if (r > 180 && g > 140 && b > 100) {
-    return { emoji: "🧑🏼‍🦲", tone: "Medium Light" };
+    return { tone: "Medium Light" };
   } else if (r > 160 && g > 120 && b > 80) {
-    return { emoji: "🧑🏽‍🦲", tone: "Medium" };
+    return { tone: "Medium" };
   } else if (r > 120 && g > 80 && b > 60) {
-    return { emoji: "🧑🏾‍🦲", tone: "Medium Dark" };
+    return { tone: "Medium Dark" };
   } else {
-    return { emoji: "🧑🏿‍🦲", tone: "Dark" };
+    return { tone: "Dark" };
   }
 };
 
