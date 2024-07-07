@@ -75,9 +75,9 @@ const ColourInfo = () => {
   };
 
   const renderErrorMessage = () => {
-    if (skinTone.emoji === null) {
+    if (skinTone.tone === null) {
       return "Click on the picture to sample a skin tone.";
-    } else if (skinTone.emoji === "") {
+    } else if (skinTone.tone === "") {
       return "⚠️ No skin tone detected ⚠️";
     } else {
       return null;
@@ -95,7 +95,7 @@ const ColourInfo = () => {
       {errorMessage && (
         <p className="text-lg md:text-2xl text-center py-6">{errorMessage}</p>
       )}
-      {skinTone.emoji && (
+      {skinTone.tone && (
         <div className="flex w-full">
           <div className="w-1/2 flex items-center justify-center flex-col">
             <p
