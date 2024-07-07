@@ -24,7 +24,7 @@ const SET_IMAGE_UPLOADED = "SET_IMAGE_UPLOADED";
 // Initial state
 const initialState = {
   selectedColour: "",
-  skinTone: { emoji: null, tone: null },
+  skinTone: { tone: null },
   lastClickPosition: null,
   sampleSize: 20,
   maxSampleSize: 50,
@@ -53,7 +53,20 @@ const skinToneReducer = (state, action) => {
   }
 };
 
-export const SkinToneContext = createContext();
+export const SkinToneContext = createContext({
+  ...initialState,
+  canvasRef: null,
+  imageRef: null,
+  handleImageUpload: () => {},
+  handleCanvasClick: () => {},
+  setSelectedColour: () => {},
+  setSkinTone: () => {},
+  setLastClickPosition: () => {},
+  setSampleSize: () => {},
+  setMaxSampleSize: () => {},
+  setAverageRGB: () => {},
+  setImageUploaded: () => {},
+});
 
 const SkinToneProvider = ({ children }) => {
   const [skinToneState, skinToneDispatch] = useReducer(
