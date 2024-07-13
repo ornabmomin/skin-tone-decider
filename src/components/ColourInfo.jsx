@@ -8,6 +8,7 @@ const ColourInfo = () => {
 
   const [currentEmojiIndex, setCurrentEmojiIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [hasSetInitialEmoji, setHasSetInitialEmoji] = useState(false);
 
   const startX = useRef(null);
   const isDragging = useRef(false);
@@ -18,6 +19,17 @@ const ColourInfo = () => {
       return () => clearTimeout(timer);
     }
   }, [isAnimating]);
+
+  useEffect(() => {
+    if (skinTone.tone && !hasSetInitialEmoji) {
+      const randomIndex = Math.floor(
+        Math.random() * emojisWithSkinTones.length
+      );
+      setCurrentEmojiIndex(randomIndex);
+      setIsAnimating(true);
+      setHasSetInitialEmoji(true);
+    }
+  }, [skinTone.tone, hasSetInitialEmoji]);
 
   const handleStart = (clientX) => {
     startX.current = clientX;
