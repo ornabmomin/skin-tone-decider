@@ -8,7 +8,7 @@ function App() {
     <div className="flex flex-col bg-slate-950">
       <SkinToneProvider>
         <Header />
-        <main className="py-4">
+        <main>
           <SkinToneSelector />
         </main>
       </SkinToneProvider>
