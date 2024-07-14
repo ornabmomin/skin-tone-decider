@@ -20,6 +20,7 @@ const SET_SAMPLE_SIZE = "SET_SAMPLE_SIZE";
 const SET_MAX_SAMPLE_SIZE = "SET_MAX_SAMPLE_SIZE";
 const SET_AVERAGE_RGB = "SET_AVERAGE_RGB";
 const SET_IMAGE_UPLOADED = "SET_IMAGE_UPLOADED";
+const RESET_STATE = "RESET_STATE";
 
 // Initial state
 const initialState = {
@@ -48,6 +49,8 @@ const skinToneReducer = (state, action) => {
       return { ...state, averageRGB: action.payload };
     case SET_IMAGE_UPLOADED:
       return { ...state, imageUploaded: action.payload };
+    case RESET_STATE:
+      return { ...initialState, imageUploaded: true };
     default:
       return state;
   }
@@ -66,6 +69,7 @@ export const SkinToneContext = createContext({
   setMaxSampleSize: () => {},
   setAverageRGB: () => {},
   setImageUploaded: () => {},
+  resetState: () => {},
 });
 
 const SkinToneProvider = ({ children }) => {
@@ -109,12 +113,17 @@ const SkinToneProvider = ({ children }) => {
     skinToneDispatch({ type: SET_IMAGE_UPLOADED, payload: isUploaded });
   };
 
+  const resetState = useCallback(() => {
+    skinToneDispatch({ type: RESET_STATE });
+  }, []);
+
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     const img = new Image();
     img.onload = () => {
-      setImageUploaded(true);
+      resetState();
       imageRef.current = img;
+      updateCanvasSize();
     };
 
     if (file) {
@@ -169,7 +178,7 @@ const SkinToneProvider = ({ children }) => {
       const canvas = canvasRef.current;
       const img = imageRef.current;
       const maxWidth = window.innerWidth * 0.8;
-      const maxHeight = window.innerHeight * 0.75;
+      const maxHeight = window.innerHeight * 0.6;
       let width = img.width;
       let height = img.height;
 
@@ -221,6 +230,7 @@ const SkinToneProvider = ({ children }) => {
     handleImageUpload,
     handleCanvasClick,
     updateCanvasSize,
+    resetState,
   };
 
   return (
