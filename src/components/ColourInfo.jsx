@@ -1,6 +1,10 @@
 import { SkinToneContext } from "../store/SkinToneContext";
 import { useContext, useRef, useState, useEffect } from "react";
 import { emojisWithSkinTones, skinToneMap } from "../utils/emojis";
+import data from "@emoji-mart/data";
+import { init } from "emoji-mart";
+
+init({ data });
 
 const ColourInfo = () => {
   const { skinTone, sampleSize, setSampleSize, maxSampleSize } =
@@ -98,9 +102,8 @@ const ColourInfo = () => {
 
   const errorMessage = renderErrorMessage();
 
-  const currentEmoji = skinTone.tone
-    ? emojisWithSkinTones[currentEmojiIndex][skinToneMap[skinTone.tone] || 0]
-    : emojisWithSkinTones[currentEmojiIndex][0];
+  const currentEmoji = emojisWithSkinTones[currentEmojiIndex];
+  const skinToneValue = skinToneMap[skinTone.tone];
 
   return (
     <div className="flex flex-col items-center">
@@ -120,7 +123,7 @@ const ColourInfo = () => {
               onMouseUp={handleMouseUp}
               onMouseLeave={handleMouseLeave}
             >
-              {currentEmoji}
+              <em-emoji id={currentEmoji} skin={skinToneValue}></em-emoji>
             </p>
             <p className="text-xs pt-3">Swipe to change</p>
           </div>
