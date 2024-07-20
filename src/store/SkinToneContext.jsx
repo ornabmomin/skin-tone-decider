@@ -7,13 +7,13 @@ import {
 } from "react";
 import PropTypes from "prop-types";
 import getSkinTone from "../utils/getSkinTone";
+import { skinToneMap } from "../utils/emojis";
 import {
   drawImageAndSquare,
   calculateAverageColor,
 } from "../utils/canvasUtils";
 
 // Define action types
-const SET_SELECTED_COLOUR = "SET_SELECTED_COLOUR";
 const SET_SKIN_TONE = "SET_SKIN_TONE";
 const SET_LAST_CLICK_POSITION = "SET_LAST_CLICK_POSITION";
 const SET_SAMPLE_SIZE = "SET_SAMPLE_SIZE";
@@ -21,24 +21,32 @@ const SET_MAX_SAMPLE_SIZE = "SET_MAX_SAMPLE_SIZE";
 const SET_AVERAGE_RGB = "SET_AVERAGE_RGB";
 const SET_IMAGE_UPLOADED = "SET_IMAGE_UPLOADED";
 const RESET_STATE = "RESET_STATE";
+const SET_SELECTED_EMOJI = "SET_SELECTED_EMOJI";
+const SET_PICKER_OPEN = "SET_PICKER_OPEN";
+const EMOJI_ANIMATION = "EMOJI_ANIMATION";
 
 // Initial state
 const initialState = {
-  selectedColour: "",
   skinTone: { tone: null },
+  skinToneValue: 1,
   lastClickPosition: null,
   sampleSize: 20,
   maxSampleSize: 50,
   averageRGB: null,
   imageUploaded: false,
+  selectedEmoji: "+1",
+  showEmojiPicker: false,
+  emojiAnimating: false,
 };
 
 const skinToneReducer = (state, action) => {
   switch (action.type) {
-    case SET_SELECTED_COLOUR:
-      return { ...state, selectedColor: action.payload };
     case SET_SKIN_TONE:
-      return { ...state, skinTone: action.payload };
+      return {
+        ...state,
+        skinTone: action.payload.skinTone,
+        skinToneValue: action.payload.skinToneValue,
+      };
     case SET_LAST_CLICK_POSITION:
       return { ...state, lastClickPosition: action.payload };
     case SET_SAMPLE_SIZE:
@@ -49,6 +57,16 @@ const skinToneReducer = (state, action) => {
       return { ...state, averageRGB: action.payload };
     case SET_IMAGE_UPLOADED:
       return { ...state, imageUploaded: action.payload };
+    case SET_SELECTED_EMOJI:
+      return {
+        ...state,
+        selectedEmoji: action.payload,
+        showEmojiPicker: false,
+      };
+    case SET_PICKER_OPEN:
+      return { ...state, showEmojiPicker: true };
+    case EMOJI_ANIMATION:
+      return { ...state, emojiAnimating: action.payload };
     case RESET_STATE:
       return { ...initialState, imageUploaded: true };
     default:
@@ -62,7 +80,6 @@ export const SkinToneContext = createContext({
   imageRef: null,
   handleImageUpload: () => {},
   handleCanvasClick: () => {},
-  setSelectedColour: () => {},
   setSkinTone: () => {},
   setLastClickPosition: () => {},
   setSampleSize: () => {},
@@ -70,6 +87,8 @@ export const SkinToneContext = createContext({
   setAverageRGB: () => {},
   setImageUploaded: () => {},
   resetState: () => {},
+  setSelectedEmoji: () => {},
+  handlePickerOpen: () => {},
 });
 
 const SkinToneProvider = ({ children }) => {
@@ -81,14 +100,25 @@ const SkinToneProvider = ({ children }) => {
   const canvasRef = useRef(null);
   const imageRef = useRef(null);
 
-  const setSelectedColour = (colour) => {
-    skinToneDispatch({ type: SET_SELECTED_COLOUR, payload: colour });
-  };
+  const setEmojiAnimation = useCallback(() => {
+    skinToneDispatch({ type: EMOJI_ANIMATION, payload: true });
+    setTimeout(() => {
+      skinToneDispatch({ type: EMOJI_ANIMATION, payload: false });
+    }, 300);
+  }, []);
 
-  const setSkinTone = (r, g, b) => {
-    const skinTone = getSkinTone(r, g, b);
-    skinToneDispatch({ type: SET_SKIN_TONE, payload: skinTone });
-  };
+  const setSkinTone = useCallback(
+    (r, g, b) => {
+      const skinTone = getSkinTone(r, g, b);
+      const skinToneValue = skinToneMap[skinTone.tone];
+      skinToneDispatch({
+        type: SET_SKIN_TONE,
+        payload: { skinTone, skinToneValue },
+      });
+      setEmojiAnimation();
+    },
+    [setEmojiAnimation]
+  );
 
   const setLastClickPosition = (position) => {
     skinToneDispatch({
@@ -111,6 +141,15 @@ const SkinToneProvider = ({ children }) => {
 
   const setImageUploaded = (isUploaded) => {
     skinToneDispatch({ type: SET_IMAGE_UPLOADED, payload: isUploaded });
+  };
+
+  const setSelectedEmoji = ({ id }) => {
+    skinToneDispatch({ type: SET_SELECTED_EMOJI, payload: id });
+    setEmojiAnimation();
+  };
+
+  const handlePickerOpen = () => {
+    skinToneDispatch({ type: SET_PICKER_OPEN });
   };
 
   const resetState = useCallback(() => {
@@ -164,13 +203,11 @@ const SkinToneProvider = ({ children }) => {
       );
 
       const { r, g, b } = calculateAverageColor(imageData);
-      const rgb = `rgb(${r}, ${g}, ${b})`;
 
-      setSelectedColour(rgb);
       setAverageRGB({ r, g, b });
       setSkinTone(r, g, b);
     },
-    [skinToneState.sampleSize]
+    [skinToneState.sampleSize, setSkinTone]
   );
 
   const updateCanvasSize = useCallback(() => {
@@ -220,7 +257,6 @@ const SkinToneProvider = ({ children }) => {
     ...skinToneState,
     canvasRef,
     imageRef,
-    setSelectedColour,
     setSkinTone,
     setLastClickPosition,
     setSampleSize,
@@ -231,6 +267,9 @@ const SkinToneProvider = ({ children }) => {
     handleCanvasClick,
     updateCanvasSize,
     resetState,
+    setSelectedEmoji,
+    handlePickerOpen,
+    setEmojiAnimation,
   };
 
   return (
