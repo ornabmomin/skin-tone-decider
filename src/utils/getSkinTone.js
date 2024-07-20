@@ -21,15 +21,15 @@ const getSkinTone = (r, g, b) => {
 
   // Refine skin tone ranges
   if (r > 200 && g > 160 && b > 120) {
-    return { tone: "Light" };
+    return { tone: "Light", value: 2 };
   } else if (r > 180 && g > 140 && b > 100) {
-    return { tone: "Medium Light" };
+    return { tone: "Medium Light", value: 3 };
   } else if (r > 160 && g > 120 && b > 80) {
-    return { tone: "Medium" };
+    return { tone: "Medium", value: 4 };
   } else if (r > 120 && g > 80 && b > 60) {
-    return { tone: "Medium Dark" };
+    return { tone: "Medium Dark", value: 5 };
   } else {
-    return { tone: "Dark" };
+    return { tone: "Dark", value: 6 };
   }
 };
 

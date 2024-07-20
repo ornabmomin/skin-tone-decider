@@ -7,7 +7,7 @@ import {
 } from "react";
 import PropTypes from "prop-types";
 import getSkinTone from "../utils/getSkinTone";
-import { skinToneMap, skinToneEmojiList } from "../utils/emojis";
+import { skinToneEmojiList } from "../utils/emojis";
 import {
   drawImageAndSquare,
   calculateAverageColor,
@@ -116,14 +116,16 @@ const SkinToneProvider = ({ children }) => {
   const setSkinTone = useCallback(
     (r, g, b) => {
       const skinTone = getSkinTone(r, g, b);
-      const skinToneValue = skinToneMap[skinTone.tone];
-      skinToneDispatch({
-        type: SET_SKIN_TONE,
-        payload: { skinTone, skinToneValue },
-      });
-      setEmojiAnimation();
+      const skinToneValue = skinTone.value;
+      if (skinTone.tone !== skinToneState.skinTone.tone) {
+        skinToneDispatch({
+          type: SET_SKIN_TONE,
+          payload: { skinTone, skinToneValue },
+        });
+        setEmojiAnimation();
+      }
     },
-    [setEmojiAnimation]
+    [setEmojiAnimation, skinToneState.skinTone.tone]
   );
 
   const setLastClickPosition = (position) => {

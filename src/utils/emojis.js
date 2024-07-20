@@ -1,13 +1,5 @@
 import data from "@emoji-mart/data";
 
-export const skinToneMap = {
-  Light: 2,
-  "Medium Light": 3,
-  Medium: 4,
-  "Medium Dark": 5,
-  Dark: 6,
-};
-
 // Emojis with skin tones that I don't want as options
 const additionalExclusions = [
   "cop",
