@@ -4,6 +4,7 @@ import Canvas from "./Canvas";
 import ColourInfo from "./ColourInfo";
 import { SkinToneContext } from "../store/SkinToneContext";
 import EmojiPicker from "./EmojiPicker";
+import Button from "./Button";
 
 const SkinToneSelector = () => {
   const {
@@ -33,18 +34,8 @@ const SkinToneSelector = () => {
               <ColourInfo />
             </div>
             <div className="flex gap-2 mt-4">
-              <button
-                onClick={handlePickerOpen}
-                className="flex-1 min-w-[150px] px-4 py-2 bg-gradient-to-r from-red-500 via-pink-500 to-purple-400 text-white rounded transition-colors"
-              >
-                Change Emoji
-              </button>
-              <button
-                onClick={handleNewImageClick}
-                className="flex-1 min-w-[150px] px-4 py-2 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-white rounded transition-colors"
-              >
-                New Image
-              </button>
+              <Button handleOnClick={handlePickerOpen}>Change Emoji</Button>
+              <Button handleOnClick={handleNewImageClick}>New Image</Button>
             </div>
             <input
               type="file"
