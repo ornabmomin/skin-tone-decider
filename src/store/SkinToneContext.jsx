@@ -12,6 +12,7 @@ import {
   drawImageAndSquare,
   calculateAverageColor,
 } from "../utils/canvasUtils";
+import { skinToneEmojiList } from "../utils/emojis";
 
 // Define action types
 const SET_SKIN_TONE = "SET_SKIN_TONE";
@@ -25,6 +26,11 @@ const SET_SELECTED_EMOJI = "SET_SELECTED_EMOJI";
 const SET_PICKER_OPEN = "SET_PICKER_OPEN";
 const EMOJI_ANIMATION = "EMOJI_ANIMATION";
 
+const getRandomSkinToneEmoji = () => {
+  const randomIndex = Math.floor(Math.random() * skinToneEmojiList.length);
+  return skinToneEmojiList[randomIndex].id;
+};
+
 // Initial state
 const initialState = {
   skinTone: { tone: null },
@@ -34,7 +40,7 @@ const initialState = {
   maxSampleSize: 50,
   averageRGB: null,
   imageUploaded: false,
-  selectedEmoji: "+1",
+  selectedEmoji: getRandomSkinToneEmoji(),
   showEmojiPicker: false,
   emojiAnimating: false,
 };
@@ -68,7 +74,11 @@ const skinToneReducer = (state, action) => {
     case EMOJI_ANIMATION:
       return { ...state, emojiAnimating: action.payload };
     case RESET_STATE:
-      return { ...initialState, imageUploaded: true };
+      return {
+        ...initialState,
+        imageUploaded: true,
+        selectedEmoji: getRandomSkinToneEmoji(),
+      };
     default:
       return state;
   }
@@ -153,7 +163,14 @@ const SkinToneProvider = ({ children }) => {
   };
 
   const resetState = useCallback(() => {
-    skinToneDispatch({ type: RESET_STATE });
+    skinToneDispatch({
+      type: RESET_STATE,
+      payload: {
+        ...initialState,
+        imageUploaded: true,
+        selectedEmoji: getRandomSkinToneEmoji(),
+      },
+    });
   }, []);
 
   const handleImageUpload = (event) => {
