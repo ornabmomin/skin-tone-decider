@@ -3,9 +3,15 @@ import UploadBox from "./UploadBox";
 import Canvas from "./Canvas";
 import ColourInfo from "./ColourInfo";
 import { SkinToneContext } from "../store/SkinToneContext";
+import EmojiPicker from "./EmojiPicker";
 
 const SkinToneSelector = () => {
-  const { imageUploaded, handleImageUpload } = useContext(SkinToneContext);
+  const {
+    imageUploaded,
+    handleImageUpload,
+    handlePickerOpen,
+    showEmojiPicker,
+  } = useContext(SkinToneContext);
 
   const fileInputRef = useRef(null);
 
@@ -26,12 +32,20 @@ const SkinToneSelector = () => {
             <div className="text-center bg-purple-50 p-4 rounded-lg shadow-md w-80 h-38 flex flex-col justify-center">
               <ColourInfo />
             </div>
-            <button
-              onClick={handleNewImageClick}
-              className="mt-4 px-4 py-2 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-white rounded transition-colors"
-            >
-              Choose New Image
-            </button>
+            <div className="flex gap-2 mt-4">
+              <button
+                onClick={handlePickerOpen}
+                className="flex-1 min-w-[150px] px-4 py-2 bg-gradient-to-r from-red-500 via-pink-500 to-purple-400 text-white rounded transition-colors"
+              >
+                Change Emoji
+              </button>
+              <button
+                onClick={handleNewImageClick}
+                className="flex-1 min-w-[150px] px-4 py-2 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-white rounded transition-colors"
+              >
+                New Image
+              </button>
+            </div>
             <input
               type="file"
               ref={fileInputRef}
@@ -49,6 +63,7 @@ const SkinToneSelector = () => {
           />
         )}
       </div>
+      {showEmojiPicker && <EmojiPicker />}
     </div>
   );
 };
