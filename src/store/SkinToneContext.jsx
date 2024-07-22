@@ -137,6 +137,7 @@ const SkinToneProvider = ({ children }) => {
 
   const setSampleSize = (size) => {
     skinToneDispatch({ type: SET_SAMPLE_SIZE, payload: size });
+    handleSquareResize(skinToneState.lastClickPosition);
   };
 
   const setMaxSampleSize = (size) => {
@@ -189,26 +190,8 @@ const SkinToneProvider = ({ children }) => {
     }
   };
 
-  const handleCanvasClick = useCallback(
-    (event) => {
-      const canvas = canvasRef.current;
-      if (!canvas) {
-        console.error("Can't get canvas ref");
-        return;
-      }
-
-      const ctx = canvas.getContext("2d");
-      if (!ctx) {
-        console.error("Unable to get 2D context");
-        return;
-      }
-
-      const rect = canvas.getBoundingClientRect();
-      const x = Math.round(event.clientX - rect.left);
-      const y = Math.round(event.clientY - rect.top);
-
-      setLastClickPosition({ x, y });
-
+  const setAvgRGBAndSkinTone = useCallback(
+    (ctx, canvas, x, y) => {
       const halfSampleSize = Math.floor(skinToneState.sampleSize / 2);
       const imageData = ctx.getImageData(
         Math.max(0, x - halfSampleSize),
@@ -222,7 +205,45 @@ const SkinToneProvider = ({ children }) => {
       setAverageRGB({ r, g, b });
       setSkinTone(r, g, b);
     },
-    [skinToneState.sampleSize, setSkinTone]
+    [setSkinTone, skinToneState.sampleSize]
+  );
+
+  const handleColourUpdate = useCallback(
+    (x, y) => {
+      const canvas = canvasRef.current;
+      const ctx = canvas?.getContext("2d");
+
+      if (!canvas || !ctx) {
+        console.error("Canvas or context not available");
+        return;
+      }
+
+      setLastClickPosition({ x, y });
+      setAvgRGBAndSkinTone(ctx, canvas, x, y);
+    },
+    [setAvgRGBAndSkinTone]
+  );
+
+  const handleCanvasClick = useCallback(
+    (event) => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+
+      const rect = canvas.getBoundingClientRect();
+      const x = Math.round(event.clientX - rect.left);
+      const y = Math.round(event.clientY - rect.top);
+
+      handleColourUpdate(x, y);
+    },
+    [handleColourUpdate]
+  );
+
+  const handleSquareResize = useCallback(
+    (lastClickPosition) => {
+      const { x, y } = lastClickPosition;
+      handleColourUpdate(x, y);
+    },
+    [handleColourUpdate]
   );
 
   const updateCanvasSize = useCallback(() => {
