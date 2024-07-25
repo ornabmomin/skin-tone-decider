@@ -6,6 +6,10 @@ const additionalExclusions = [
   "male-police-officer",
   "female-police-officer",
   "sleeping_accommodation",
+  "snowboarder",
+  "vampire",
+  "male_vampire",
+  "female_vampire",
 ];
 
 const arrayOfEmojis = Object.values(data.emojis);

@@ -16,7 +16,7 @@ const SampleSizeSlider = () => {
         step="5"
         value={sampleSize}
         onChange={(event) => setSampleSize(Number(event.target.value))}
-        className="mt-1 w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+        className="cursor-pointer range range-secondary range-sm"
       />
       <label
         htmlFor="sampleSize"

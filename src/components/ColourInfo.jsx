@@ -21,7 +21,9 @@ const ColourInfo = () => {
   return (
     <div className="flex flex-col items-center">
       {errorMessage && (
-        <p className="text-lg md:text-2xl text-center py-6">{errorMessage}</p>
+        <p className="text-lg md:text-2xl text-center py-6 text-gray-600">
+          {errorMessage}
+        </p>
       )}
       {skinTone.tone && (
         <div className="flex w-full">
