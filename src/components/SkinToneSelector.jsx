@@ -11,7 +11,7 @@ const SkinToneSelector = () => {
     imageUploaded,
     handleImageUpload,
     handlePickerOpen,
-    showEmojiPicker,
+    emojiPickerOpen,
   } = useContext(SkinToneContext);
 
   const fileInputRef = useRef(null);
@@ -54,7 +54,7 @@ const SkinToneSelector = () => {
           />
         )}
       </div>
-      {showEmojiPicker && <EmojiPicker />}
+      {emojiPickerOpen && <EmojiPicker />}
     </div>
   );
 };

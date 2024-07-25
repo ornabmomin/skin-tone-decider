@@ -38,7 +38,7 @@ const initialState = {
   averageRGB: null,
   imageUploaded: false,
   selectedEmoji: getRandomSkinToneEmoji(),
-  showEmojiPicker: false,
+  emojiPickerOpen: false,
   emojiAnimating: false,
 };
 
@@ -64,10 +64,10 @@ const skinToneReducer = (state, action) => {
       return {
         ...state,
         selectedEmoji: action.payload,
-        showEmojiPicker: false,
+        emojiPickerOpen: false,
       };
     case SET_PICKER_OPEN:
-      return { ...state, showEmojiPicker: true };
+      return { ...state, emojiPickerOpen: action.payload };
     case EMOJI_ANIMATION:
       return { ...state, emojiAnimating: action.payload };
     case RESET_STATE:
@@ -87,15 +87,16 @@ export const SkinToneContext = createContext({
   imageRef: null,
   handleImageUpload: () => {},
   handleCanvasClick: () => {},
+  handlePickerClose: () => {},
+  handlePickerOpen: () => {},
   setSkinTone: () => {},
   setLastClickPosition: () => {},
   setSampleSize: () => {},
   setMaxSampleSize: () => {},
   setAverageRGB: () => {},
   setImageUploaded: () => {},
-  resetState: () => {},
+  handleResetState: () => {},
   setSelectedEmoji: () => {},
-  handlePickerOpen: () => {},
 });
 
 const SkinToneProvider = ({ children }) => {
@@ -157,11 +158,15 @@ const SkinToneProvider = ({ children }) => {
     setEmojiAnimation();
   };
 
-  const handlePickerOpen = () => {
-    skinToneDispatch({ type: SET_PICKER_OPEN });
+  const handlePickerClose = () => {
+    skinToneDispatch({ type: SET_PICKER_OPEN, payload: false });
   };
 
-  const resetState = useCallback(() => {
+  const handlePickerOpen = () => {
+    skinToneDispatch({ type: SET_PICKER_OPEN, payload: true });
+  };
+
+  const handleResetState = useCallback(() => {
     skinToneDispatch({
       type: RESET_STATE,
       payload: {
@@ -176,7 +181,7 @@ const SkinToneProvider = ({ children }) => {
     const file = event.target.files[0];
     const img = new Image();
     img.onload = () => {
-      resetState();
+      handleResetState();
       imageRef.current = img;
       updateCanvasSize();
     };
@@ -302,10 +307,11 @@ const SkinToneProvider = ({ children }) => {
     handleImageUpload,
     handleCanvasClick,
     updateCanvasSize,
-    resetState,
+    handleResetState,
     setSelectedEmoji,
-    handlePickerOpen,
     setEmojiAnimation,
+    handlePickerOpen,
+    handlePickerClose,
   };
 
   return (
