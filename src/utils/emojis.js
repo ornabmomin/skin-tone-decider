@@ -1,4 +1,10 @@
-import data from "@emoji-mart/data";
+const fetchEmojiData = async () => {
+  const response = await fetch("https://cdn.jsdelivr.net/npm/@emoji-mart/data");
+  const data = await response.json();
+  return data;
+};
+
+export const data = await fetchEmojiData();
 
 // Emojis with skin tones that I don't want as options
 const additionalExclusions = [

@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext, useRef, useCallback } from "react";
-import data from "@emoji-mart/data";
+import { data } from "../utils/emojis";
 import Picker from "@emoji-mart/react";
 import { exclusionList } from "../utils/emojis";
 import { SkinToneContext } from "../store/SkinToneContext";

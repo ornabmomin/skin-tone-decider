@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { SkinToneContext } from "../store/SkinToneContext";
-import data from "@emoji-mart/data";
+import { data } from "../utils/emojis";
 import { init } from "emoji-mart";
 
 init({ data });
