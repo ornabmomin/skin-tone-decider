@@ -36,7 +36,6 @@ const initializeEmojiData = async () => {
       tempExclusionList.push(emoji.id);
     }
   }
-
   skinToneEmojiList = tempSkinToneEmojiList;
   exclusionList = tempExclusionList;
 };
