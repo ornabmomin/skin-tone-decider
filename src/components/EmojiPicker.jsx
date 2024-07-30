@@ -1,7 +1,6 @@
 import { useState, useEffect, useContext, useRef, useCallback } from "react";
-import { data } from "../utils/emojis";
+import { data, exclusionList } from "../utils/emojis";
 import Picker from "@emoji-mart/react";
-import { exclusionList } from "../utils/emojis";
 import { SkinToneContext } from "../store/SkinToneContext";
 
 const EmojiPicker = () => {

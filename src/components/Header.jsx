@@ -1,8 +1,9 @@
-import { useContext, useState } from "react";
-import Modal from "./Modal";
-import logo from "/sts-logo.png";
+import { useContext, useState, lazy, Suspense } from "react";
 import { SkinToneContext } from "../store/SkinToneContext";
 import InfoIcon from "./ui/InfoIcon";
+import logo from "/sts-logo.png";
+
+const Modal = lazy(() => import("./Modal"));
 
 const Header = () => {
   const { imageUploaded } = useContext(SkinToneContext);
@@ -27,6 +28,7 @@ const Header = () => {
                 imageUploaded ? "w-12 h-12" : "w-24 h-24"
               } rounded-full`}
             />
+
             <span
               className={`${
                 imageUploaded ? "text-sm" : "text-lg"
@@ -46,7 +48,11 @@ const Header = () => {
         </div>
       </header>
 
-      {isModalOpen && <Modal toggleModal={toggleModal} />}
+      {isModalOpen && (
+        <Suspense fallback={<span className="loading loading-ring"></span>}>
+          <Modal toggleModal={toggleModal} />
+        </Suspense>
+      )}
     </>
   );
 };
