@@ -26,24 +26,60 @@ const ADDITIONAL_EXCLUSIONS = [
   "man-heart-woman",
 ];
 
+// Fallback data in case fetching fails
+const FALLBACK_DATA = {
+  categories: [
+    {
+      id: "people",
+      name: "Smileys & People",
+      emojis: ["+1", "man"],
+    },
+  ],
+  emojis: {
+    "+1": {
+      id: "+1",
+      name: "Thumbs Up",
+      keywords: [
+        "thumbsup",
+        "yes",
+        "awesome",
+        "good",
+        "agree",
+        "accept",
+        "cool",
+        "hand",
+        "like",
+      ],
+      skins: [
+        { unified: "1f44d", native: "👍" },
+        { unified: "1f44d-1f3fb", native: "👍🏻" },
+        { unified: "1f44d-1f3fc", native: "👍🏼" },
+        { unified: "1f44d-1f3fd", native: "👍🏽" },
+        { unified: "1f44d-1f3fe", native: "👍🏾" },
+        { unified: "1f44d-1f3ff", native: "👍🏿" },
+      ],
+      version: 1,
+    },
+  },
+};
+
 let data = null;
 let skinToneEmojiList = [];
 let exclusionList = [];
 
-const fetchEmojiData = async () => {
+const initializeEmojiData = async () => {
   try {
     const response = await fetch(EMOJI_DATA_URL);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    return await response.json();
+    data = await response.json();
   } catch (error) {
     console.error("Error fetching emoji data:", error);
-    throw error;
+    console.warn("Using fallback emoji data");
+    data = FALLBACK_DATA;
   }
-};
 
-const processEmojiData = () => {
   const emojis = Object.values(data.emojis);
 
   skinToneEmojiList = emojis
@@ -59,11 +95,6 @@ const processEmojiData = () => {
       .filter((emoji) => !skinToneEmojiList.includes(emoji.id))
       .map((emoji) => emoji.id),
   ];
-};
-
-const initializeEmojiData = async () => {
-  data = await fetchEmojiData();
-  processEmojiData();
 };
 
 initializeEmojiData();
