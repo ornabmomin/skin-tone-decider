@@ -4,32 +4,43 @@ const fetchEmojiData = async () => {
   return data;
 };
 
-export const data = await fetchEmojiData();
+let data = null;
+let skinToneEmojiList = [];
+let exclusionList = [];
 
-// Emojis with skin tones that I don't want as options
-const additionalExclusions = [
-  "cop",
-  "male-police-officer",
-  "female-police-officer",
-  "sleeping_accommodation",
-  "snowboarder",
-  "vampire",
-  "male_vampire",
-  "female_vampire",
-];
+const initializeEmojiData = async () => {
+  data = await fetchEmojiData();
 
-const arrayOfEmojis = Object.values(data.emojis);
+  // Emojis with skin tones that I don't want as options
+  const additionalExclusions = [
+    "cop",
+    "male-police-officer",
+    "female-police-officer",
+    "sleeping_accommodation",
+    "snowboarder",
+    "vampire",
+    "male_vampire",
+    "female_vampire",
+  ];
 
-// List of emojis to randomly choose from for initial emoji
-export const skinToneEmojiList = [];
+  const arrayOfEmojis = Object.values(data.emojis);
 
-// List of emojis to exclude from emoji picker
-export const exclusionList = [...additionalExclusions];
+  // Temporary lists to hold the data before updating the module-scoped variables
+  const tempSkinToneEmojiList = [];
+  const tempExclusionList = [...additionalExclusions];
 
-for (const emoji of arrayOfEmojis) {
-  if (emoji.skins?.length > 1 && !additionalExclusions.includes(emoji.id)) {
-    skinToneEmojiList.push(emoji.id);
-  } else {
-    exclusionList.push(emoji.id);
+  for (const emoji of arrayOfEmojis) {
+    if (emoji.skins?.length > 1 && !additionalExclusions.includes(emoji.id)) {
+      tempSkinToneEmojiList.push(emoji.id);
+    } else {
+      tempExclusionList.push(emoji.id);
+    }
   }
-}
+
+  skinToneEmojiList = tempSkinToneEmojiList;
+  exclusionList = tempExclusionList;
+};
+
+const emojiDataPromise = initializeEmojiData();
+
+export { data, skinToneEmojiList, exclusionList, emojiDataPromise };
