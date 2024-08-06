@@ -1,4 +1,5 @@
 import { useContext, useState, lazy, Suspense } from "react";
+import { createPortal } from "react-dom";
 import { SkinToneContext } from "../store/SkinToneContext";
 import InfoIcon from "./ui/InfoIcon";
 import logo from "/sts-logo.png";
@@ -48,11 +49,13 @@ const Header = () => {
         </div>
       </header>
 
-      {isModalOpen && (
-        <Suspense fallback={<span className="loading loading-ring"></span>}>
-          <Modal toggleModal={toggleModal} />
-        </Suspense>
-      )}
+      {isModalOpen &&
+        createPortal(
+          <Suspense fallback={<span className="loading loading-ring"></span>}>
+            <Modal toggleModal={toggleModal} />
+          </Suspense>,
+          document.getElementById("portal-root")
+        )}
     </>
   );
 };
