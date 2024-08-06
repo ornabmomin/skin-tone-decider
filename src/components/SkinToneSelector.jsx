@@ -24,7 +24,7 @@ const SkinToneSelector = () => {
   return (
     <div
       className={`flex flex-col items-center min-h-svh justify-center ${
-        imageUploaded ? "" : "py-4"
+        !imageUploaded && "py-4"
       }`}
     >
       <div className="w-full max-w-4xl p-4 md:p-8">

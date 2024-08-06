@@ -13,7 +13,7 @@ const Emoji = () => {
     <div className="w-1/2 flex items-center justify-center flex-col">
       <p
         className={`text-gray-600 text-8xl select-none cursor-pointer transition-transform duration-300 ease-in-out ${
-          emojiAnimating ? "animate-emoji-pop" : ""
+          emojiAnimating && "animate-emoji-pop"
         }`}
         onClick={handlePickerOpen}
       >
