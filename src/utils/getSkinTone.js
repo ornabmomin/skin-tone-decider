@@ -1,34 +1,32 @@
 const getSkinTone = (r, g, b) => {
-  const toYCbCr = (r, g, b) => {
-    const y = 0.299 * r + 0.587 * g + 0.114 * b;
-    const cb = 128 - 0.169 * r - 0.331 * g + 0.5 * b;
-    const cr = 128 + 0.5 * r - 0.419 * g - 0.081 * b;
-    return { y, cb, cr };
-  };
-
-  const { y, cb, cr } = toYCbCr(r, g, b);
-
   // Check for non-skin tone colors
-  const isNonSkinTone = (y, cb, cr) => {
+  const isNonSkinTone = (r, g, b) => {
+    if (r < g || r < b) return true;
+
     // Define thresholds for non-skin tone detection
-    if (y > 250 || y < 10) return true; // Too bright or too dark
-    if (cb < 77 || cb > 127 || cr < 133 || cr > 173) return true; // Typical skin tone range in YCbCr
+    const brightness = (r + g + b) / 3;
+    const maxChannel = Math.max(r, g, b);
+    const minChannel = Math.min(r, g, b);
+
+    // Conditions for non-skin tone
+    if (brightness > 250 || brightness < 10) return true; // Too bright or too dark
+    if (maxChannel - minChannel > 170) return true; // High contrast, likely a non-skin color
 
     return false;
   };
 
-  if (isNonSkinTone(y, cb, cr)) {
+  if (isNonSkinTone(r, g, b)) {
     return { tone: "" };
   }
 
-  // Refine skin tone ranges based on YCbCr
-  if (y > 200) {
+  // Refine skin tone ranges
+  if (r > 200 && g > 160 && b > 120) {
     return { tone: "Light", value: 2 };
-  } else if (y > 170) {
+  } else if (r > 180 && g > 140 && b > 100) {
     return { tone: "Medium Light", value: 3 };
-  } else if (y > 140) {
+  } else if (r > 160 && g > 120 && b > 80) {
     return { tone: "Medium", value: 4 };
-  } else if (y > 100) {
+  } else if (r > 120 && g > 80 && b > 60) {
     return { tone: "Medium Dark", value: 5 };
   } else {
     return { tone: "Dark", value: 6 };
